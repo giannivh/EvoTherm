@@ -32,6 +32,7 @@
 #include "terminal.h"
 #include "../app.h"
 #include "../markup.h"
+#include "../util/dateutil.h"
 
 void Terminal::printHelp() {
 
@@ -97,10 +98,10 @@ void Terminal::printZones(const std::vector<Zone> &zones) {
 
     // print table header
     printf("+%s+%s+%s+%s+\n", std::string(20,'-').c_str(), std::string(15,'-').c_str(), std::string(15,'-').c_str(),
-           std::string(20,'-').c_str());
-    printf("| %-18s | %-13s | %-13s | %-18s |\n", "Zone", "Temperature", "Set Point", "Mode");
+           std::string(27,'-').c_str());
+    printf("| %-18s | %-13s | %-13s | %-25s |\n", "Zone", "Temperature", "Set Point", "Mode");
     printf("+%s+%s+%s+%s+\n", std::string(20,'-').c_str(), std::string(15,'-').c_str(), std::string(15,'-').c_str(),
-           std::string(20,'-').c_str());
+           std::string(27,'-').c_str());
 
     // print data
     for (int i = 0; i < zones.size(); i++) {
@@ -137,15 +138,34 @@ void Terminal::printZones(const std::vector<Zone> &zones) {
         char spD[5];
         sprintf(spD, "%.2f", zones[i].targetTemperature);
 
+        // convert mode
+        std::string mode = "";
+        if (zones[i].setpointMode == "FollowSchedule") {
+
+            mode = "Following schedule";
+        }
+        else if (zones[i].setpointMode == "TemporaryOverride") {
+
+            mode = "Until " + DateUtil::toLocal(zones[i].until);
+        }
+        else if (zones[i].setpointMode == "PermanentOverride") {
+
+            mode = "Permanent";
+        }
+        else {
+
+            mode = zones[i].setpointMode;
+        }
+
         // print row
-        printf("| %s%-18s%s | %s%s%9s °C%s | %s%10s °C%s | %s%-18s%s |\n",
+        printf("| %s%-18s%s | %s%s%9s °C%s | %s%10s °C%s | %s%-25s%s |\n",
                color.c_str(), zones[i].name.c_str(), RESET,
                color.c_str(), format.c_str(), tempD, RESET,
                color.c_str(), spD, RESET,
-               color.c_str(), zones[i].setpointMode.c_str(), RESET);
+               color.c_str(), mode.c_str(), RESET);
     }
 
     // print table footer
     printf("+%s+%s+%s+%s+\n", std::string(20,'-').c_str(), std::string(15,'-').c_str(), std::string(15,'-').c_str(),
-           std::string(20,'-').c_str());
+           std::string(27,'-').c_str());
 }
