@@ -17,7 +17,8 @@ set(SOURCE_FILES
         model/evohome/data/userinfo.cpp model/evohome/data/userinfo.h
         model/evohome/data/installationinfo.cpp model/evohome/data/installationinfo.h
         model/evohome/data/zone.cpp model/evohome/data/zone.h
-        model/evohome/data/mode.cpp model/evohome/data/mode.h)
+        model/evohome/data/mode.cpp model/evohome/data/mode.h
+        model/util/dateutil.cpp model/util/dateutil.h)
 
 add_executable(evotherm ${SOURCE_FILES})
 target_link_libraries(evotherm curl)

@@ -35,6 +35,7 @@
 #include "model/io/cmdparser.h"
 #include "model/io/terminal.h"
 #include "model/exitcode.h"
+#include "model/util/dateutil.h"
 
 int main(int argc, char* argv[]) {
 
@@ -125,16 +126,7 @@ int main(int argc, char* argv[]) {
             }
 
             // parse until
-            std::string untilParsed = "";
-            if (until != CMDParser::NO_VALUE) {
-
-                struct tm cal = {0, 0, 0, 0, 0, 0, 0, 0, -1, 0, NULL};
-                strptime(until.c_str(), "%Y-%m-%d %H:%M:%S", &cal);
-                time_t time = mktime(&cal);
-                char buff[50];
-                strftime(buff, sizeof(buff), "%Y-%m-%dT%H:%M:%SZ", gmtime(&time));
-                untilParsed = buff;
-            }
+            std::string untilParsed = DateUtil::toUTC(until);
 
             // set setpoint temperature
             evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);

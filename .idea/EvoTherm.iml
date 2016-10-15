@@ -18,6 +18,8 @@
       <sourceFolder url="file://$MODULE_DIR$/model/app.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/markup.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/util/dateutil.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/util/dateutil.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/exitcode.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/config.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/io/terminal.cpp" isTestSource="false" />

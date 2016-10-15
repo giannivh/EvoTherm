@@ -35,6 +35,7 @@
 #include "../../ext/jsoncpp/json/json.h"
 #include "../exitcode.h"
 #include "../markup.h"
+#include "../util/dateutil.h"
 
 EvohomeClient::EvohomeClient(const Config &config)
         : config(config) {
@@ -170,7 +171,7 @@ void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &te
     // print success
     std::cout << GREEN_LIGHT
               << "Target temperature for " << zone.name << " set to " << temperature << " °C"
-              << ((until == "")? "": " until ") << until << "."
+              << ((until == "")? "": " until ") << DateUtil::toLocal(until) << "."
               << RESET
               << std::endl;
 }
