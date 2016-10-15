@@ -74,14 +74,14 @@ public:
      * @param temperature the target temperature.
      * @param until until the given time, leave blank to make permanent.
      */
-    void setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) const;
+    void setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until);
 
     /**
      * Cancels an ongoing override.
      *
      * @param zone the zone to cancel the override for.
      */
-    void cancelOverride(const Zone &zone) const;
+    void cancelOverride(const Zone &zone);
 
 private:
 
@@ -95,8 +95,9 @@ private:
     void login();
     void getUserAccount();
     void getInstallationInfo();
+    void getTemperatures();
 
-    void setZoneTargetTemp(const Zone &zone, const std::string data) const;
+    void setZoneTargetTemp(const Zone &zone, const std::string data);
 };
 
 

@@ -42,6 +42,7 @@ EvohomeClient::EvohomeClient(const Config &config)
     this->login();
     this->getUserAccount();
     this->getInstallationInfo();
+    this->getTemperatures();
 }
 
 void EvohomeClient::login() {
@@ -104,11 +105,14 @@ void EvohomeClient::getInstallationInfo() {
 
     // parse response
     this->installationInfo.parseInstallationInfo(content);
+}
+
+void EvohomeClient::getTemperatures() {
 
     // get temperatures
-    url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/location/" + this->installationInfo.locationId +
-            "/status?includeTemperatureControlSystems=True";
-    content = HttpClient::request(url, this->applicationHeader);
+    std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/location/" + this->installationInfo.locationId +
+          "/status?includeTemperatureControlSystems=True";
+    std::string content = HttpClient::request(url, this->applicationHeader);
 
     // parse response
     this->installationInfo.parseTemperature(content);
@@ -145,7 +149,7 @@ const Zone &EvohomeClient::getZoneByName(const std::string &zone) const {
     throw std::runtime_error("Zone not found.");
 }
 
-void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) const {
+void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) {
 
     // data
     std::string data = "";
@@ -161,7 +165,7 @@ void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &te
     }
 
     // make request
-    setZoneTargetTemp(zone, data);
+    this->setZoneTargetTemp(zone, data);
 
     // print success
     std::cout << GREEN_LIGHT
@@ -171,13 +175,13 @@ void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &te
               << std::endl;
 }
 
-void EvohomeClient::cancelOverride(const Zone &zone) const {
+void EvohomeClient::cancelOverride(const Zone &zone) {
 
     // data
     std::string data = "{\"HeatSetpointValue\":0.0,\"SetpointMode\":0,\"TimeUntil\":\"\"}";
 
     // make request
-    setZoneTargetTemp(zone, data);
+    this->setZoneTargetTemp(zone, data);
 
     // print success
     std::cout << GREEN_LIGHT
@@ -186,7 +190,7 @@ void EvohomeClient::cancelOverride(const Zone &zone) const {
               << std::endl;
 }
 
-void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) const {
+void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) {
 
     // url
     std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/temperatureZone/" + zone.zoneId + "/heatSetpoint";
@@ -207,4 +211,7 @@ void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) 
         std::cerr << "Could not set target temperature. Please try again." << std::endl;
         exit(EXIT_TEMP_SET_FAILED);
     }
+
+    // update temperatures
+    this->getTemperatures();
 }

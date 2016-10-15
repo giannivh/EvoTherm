@@ -94,6 +94,10 @@ int main(int argc, char* argv[]) {
 
             // cancel override
             evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
+
+            // show the current status of all zones
+            std::cout << std::endl;
+            terminal.printZones(evohomeClient.getAllZones());
         }
         else {
 
@@ -134,6 +138,10 @@ int main(int argc, char* argv[]) {
 
             // set setpoint temperature
             evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
+
+            // show the current status of all zones
+            std::cout << std::endl;
+            terminal.printZones(evohomeClient.getAllZones());
         }
     }
     else {
