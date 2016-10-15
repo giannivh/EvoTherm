@@ -29,7 +29,6 @@
 //
 
 #include <iostream>
-#include <stdexcept>
 #include "model/config.h"
 #include "model/evohome/evohomeclient.h"
 #include "model/io/cmdparser.h"
@@ -114,11 +113,9 @@ int main(int argc, char* argv[]) {
             }
 
             // validate temperature
-            try {
-
-                std::stod(temp);
-            }
-            catch (std::invalid_argument e) {
+            char* endptr = 0;
+            strtod(temp.c_str(), &endptr);
+            if (*endptr != '\0' || endptr == temp) {
 
                 std::cout << std::endl;
                 std::cerr << "Invalid temperature " << temp << "." << std::endl;
