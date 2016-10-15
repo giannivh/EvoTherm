@@ -76,6 +76,13 @@ public:
      */
     void setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) const;
 
+    /**
+     * Cancels an ongoing override.
+     *
+     * @param zone the zone to cancel the override for.
+     */
+    void cancelOverride(const Zone &zone) const;
+
 private:
 
     Config config;
@@ -88,6 +95,8 @@ private:
     void login();
     void getUserAccount();
     void getInstallationInfo();
+
+    void setZoneTargetTemp(const Zone &zone, const std::string data) const;
 };
 
 

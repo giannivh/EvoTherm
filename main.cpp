@@ -93,9 +93,7 @@ int main(int argc, char* argv[]) {
         if (cmdParser.cmdOptionGiven("-c", "--cancel")) {
 
             // cancel override
-
-            std::cout << "TODO: Cancelling override for " << zone << std::endl;
-            // todo cancel override
+            evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
         }
         else {
 
@@ -136,9 +134,6 @@ int main(int argc, char* argv[]) {
 
             // set setpoint temperature
             evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
-
-            // show the current status of all zones
-            terminal.printZones(evohomeClient.getAllZones());
         }
     }
     else {

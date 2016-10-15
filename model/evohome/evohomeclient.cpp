@@ -147,13 +147,6 @@ const Zone &EvohomeClient::getZoneByName(const std::string &zone) const {
 
 void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) const {
 
-    // url
-    std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/temperatureZone/" + zone.zoneId + "/heatSetpoint";
-
-    // headers
-    std::vector<std::string> headers(this->applicationHeader);
-    headers.push_back("Content-Type: application/json");
-
     // data
     std::string data = "";
     if (until == "") {
@@ -167,6 +160,42 @@ void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &te
         data = "{\"HeatSetpointValue\":" + temperature + ",\"SetpointMode\":2,\"TimeUntil\":\"" + until + "\"}";
     }
 
+    // make request
+    setZoneTargetTemp(zone, data);
+
+    // print success
+    std::cout << GREEN_LIGHT
+              << "Target temperature for " << zone.name << " set to " << temperature << " °C"
+              << ((until == "")? "": " until ") << until << "."
+              << RESET
+              << std::endl;
+}
+
+void EvohomeClient::cancelOverride(const Zone &zone) const {
+
+    // data
+    std::string data = "{\"HeatSetpointValue\":0.0,\"SetpointMode\":0,\"TimeUntil\":\"\"}";
+
+    // make request
+    setZoneTargetTemp(zone, data);
+
+    // print success
+    std::cout << GREEN_LIGHT
+              << "Target temperature override for " << zone.name << " cancelled."
+              << RESET
+              << std::endl;
+}
+
+void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) const {
+
+    // url
+    std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/temperatureZone/" + zone.zoneId + "/heatSetpoint";
+
+    // headers
+    std::vector<std::string> headers(this->applicationHeader);
+    headers.push_back("Content-Type: application/json");
+
+    // send
     std::string content = HttpClient::put(url, headers, data);
 
     // parse result (we shoud get {"id": "xxxxxxx"})
@@ -178,10 +207,4 @@ void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &te
         std::cerr << "Could not set target temperature. Please try again." << std::endl;
         exit(EXIT_TEMP_SET_FAILED);
     }
-
-    std::cout << GREEN_LIGHT
-              << "Target temperature for " << zone.name << " set to " << temperature << " °C"
-              << ((until == "")? "": " until ") << until << "."
-              << RESET
-              << std::endl;
 }
