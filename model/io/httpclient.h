@@ -44,14 +44,21 @@ public:
 
     static std::string request(const std::string &url, const std::vector<std::string> &headerList);
 
-    static std::string request(const std::string &url, const std::vector<std::string> &headerList,
-                               const std::map<std::string, std::string> &dataMap);
+    static std::string post(const std::string &url, const std::vector<std::string> &headerList,
+                            const std::map<std::string, std::string> &dataMap);
 
-    static std::string urlEncode(CURL *curl, const std::string &s);
+    static std::string put(const std::string &url, const std::vector<std::string> &headerList, const std::string data);
 
 private:
 
     static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp);
+
+    static CURL *initCURL();
+
+    static std::string urlEncode(CURL *curl, const std::string &s);
+
+    static std::string perform(CURL *curl, const std::string &url, const std::vector<std::string> &headerList,
+                               const std::string data);
 };
 
 

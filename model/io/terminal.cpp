@@ -48,10 +48,10 @@ void Terminal::printHelp(const int &exitCode) {
     std::cout << std::endl;
 
     printHelpOption("-h", "--help", "Print this help.");
-    printHelpOption("-l", "--list", "Print current status of all zones. Optional.");
+    printHelpOption("-l", "--list", "Optional. Print current status of all zones.");
     printHelpOption("-z", "--zone", "Select zone ZONE.");
     printHelpOption("-t", "--temp", "Use temperature setpoint TEMP.");
-    printHelpOption("-u", "--until", "Set setpoint until UNTIL. (Format: \"yyyy-MM-dd HH:mm:ss\")");
+    printHelpOption("-u", "--until", "Optional. Set setpoint until UNTIL, leave out to make permanent. (Format: \"yyyy-MM-dd HH:mm:ss\")");
     printHelpOption("-c", "--cancel", "Cancel temperature setpoint override for the selected zone.");
     printHelpOption("-m", "--mode", "Set thermostat mode to MODE.");
     std::cout << std::endl;

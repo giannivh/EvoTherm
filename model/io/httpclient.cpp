@@ -32,12 +32,6 @@
 #include "httpclient.h"
 #include "../exitcode.h"
 
-size_t HttpClient::writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
-
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
-
 std::string HttpClient::request(const std::string &url) {
 
     std::vector<std::string> headerList;
@@ -47,25 +41,43 @@ std::string HttpClient::request(const std::string &url) {
 std::string HttpClient::request(const std::string &url, const std::vector<std::string> &headerList) {
 
     std::map<std::string, std::string> dataMap;
-    return request(url, headerList, dataMap);
+    return post(url, headerList, dataMap);
 }
 
-std::string HttpClient::request(const std::string &url, const std::vector<std::string> &headerList,
-                                const std::map<std::string, std::string> &dataMap) {
+std::string HttpClient::post(const std::string &url, const std::vector<std::string> &headerList,
+                             const std::map<std::string, std::string> &dataMap) {
 
     // init cURL
-    CURL *curl;
-    CURLcode result;
+    CURL *curl = initCURL();
 
-    curl_global_init(CURL_GLOBAL_ALL);
+    // set post data, if any
+    std::string data = "";
+    for(auto const &entry : dataMap) {
 
-    curl = curl_easy_init();
+        if (data.length() > 0) {
 
-    if (!curl) {
+            data.append("&");
+        }
 
-        std::cerr << "Error starting cURL" << std::endl;
-        exit(EXIT_CURL_ERROR);
+        data.append(entry.first + "=" + urlEncode(curl, entry.second));
     }
+
+    // do request
+    return perform(curl, url, headerList, data);
+}
+
+std::string HttpClient::put(const std::string &url, const std::vector<std::string> &headerList, const std::string data) {
+
+    // init cURL
+    CURL *curl = initCURL();
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+
+    // do request
+    return perform(curl, url, headerList, data);
+}
+
+std::string HttpClient::perform(CURL *curl, const std::string &url, const std::vector<std::string> &headerList,
+                                const std::string data) {
 
     // set url
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -79,16 +91,6 @@ std::string HttpClient::request(const std::string &url, const std::vector<std::s
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     // set post data
-    std::string data = "";
-    for(auto const &entry : dataMap) {
-
-        if (data.length() > 0) {
-
-            data.append("&");
-        }
-
-        data.append(entry.first + "=" + urlEncode(curl, entry.second));
-    }
     if (data.length() > 0) {
 
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
@@ -101,7 +103,7 @@ std::string HttpClient::request(const std::string &url, const std::vector<std::s
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
     // do request
-    result = curl_easy_perform(curl);
+    CURLcode result = curl_easy_perform(curl);
 
     // check for errors
     if (result != CURLE_OK) {
@@ -118,6 +120,27 @@ std::string HttpClient::request(const std::string &url, const std::vector<std::s
     curl_global_cleanup();
 
     return readBuffer;
+}
+
+size_t HttpClient::writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+CURL *HttpClient::initCURL() {
+
+    CURL *curl;
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+
+    if (!curl) {
+
+        std::cerr << "Error starting cURL" << std::endl;
+        exit(EXIT_CURL_ERROR);
+    }
+
+    return curl;
 }
 
 std::string HttpClient::urlEncode(CURL *curl, const std::string &s) {

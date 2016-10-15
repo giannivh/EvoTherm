@@ -43,5 +43,7 @@
 #define EXIT_INVALID_MODE       10
 #define EXIT_INVALID_ZONE       11
 #define EXIT_INVALID_ZONE_PARAM 12
+#define EXIT_INVALID_TEMP       13
+#define EXIT_TEMP_SET_FAILED    14
 
 #endif //EVOTHERM_EXITCODE_H

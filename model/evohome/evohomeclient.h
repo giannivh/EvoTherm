@@ -62,6 +62,20 @@ public:
      */
     const bool hasZone(const std::string &zone) const;
 
+    /**
+     * @return the zone.
+     */
+    const Zone &getZoneByName(const std::string &zone) const;
+
+    /**
+     * Sets the target temperature for the given zone until the given time.
+     *
+     * @param zone the zone to set the target temperature for.
+     * @param temperature the target temperature.
+     * @param until until the given time, leave blank to make permanent.
+     */
+    void setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) const;
+
 private:
 
     Config config;

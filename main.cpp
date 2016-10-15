@@ -29,6 +29,7 @@
 //
 
 #include <iostream>
+#include <stdexcept>
 #include "model/config.h"
 #include "model/evohome/evohomeclient.h"
 #include "model/io/cmdparser.h"
@@ -102,15 +103,42 @@ int main(int argc, char* argv[]) {
             const std::string &temp = cmdParser.getCMDOptionValue("-t", "--temp");
             const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
 
-            if (temp == CMDParser::NO_VALUE || until == CMDParser::NO_VALUE) {
+            if (temp == CMDParser::NO_VALUE) {
 
                 std::cout << std::endl;
-                std::cerr << "Invalid zone parameters. --temp TEMP and --until UNTIL is required." << std::endl;
+                std::cerr << "Invalid zone parameters. --temp TEMP is required." << std::endl;
                 exit(EXIT_INVALID_ZONE_PARAM);
             }
 
-            std::cout << "TODO: Setting setpoint to " << temp << " until " << until << " for zone " << zone << std::endl;
-            // todo set setpoint temperature
+            // validate temperature
+            try {
+
+                std::stod(temp);
+            }
+            catch (std::invalid_argument e) {
+
+                std::cout << std::endl;
+                std::cerr << "Invalid temperature " << temp << "." << std::endl;
+                exit(EXIT_INVALID_TEMP);
+            }
+
+            // parse until
+            std::string untilParsed = "";
+            if (until != CMDParser::NO_VALUE) {
+
+                struct tm cal = {0, 0, 0, 0, 0, 0, 0, 0, -1, 0, NULL};
+                strptime(until.c_str(), "%Y-%m-%d %H:%M:%S", &cal);
+                time_t time = mktime(&cal);
+                char buff[50];
+                strftime(buff, sizeof(buff), "%Y-%m-%dT%H:%M:%SZ", gmtime(&time));
+                untilParsed = buff;
+            }
+
+            // set setpoint temperature
+            evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
+
+            // show the current status of all zones
+            terminal.printZones(evohomeClient.getAllZones());
         }
     }
     else {

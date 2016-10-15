@@ -34,6 +34,7 @@
 #include "../io/httpclient.h"
 #include "../../ext/jsoncpp/json/json.h"
 #include "../exitcode.h"
+#include "../markup.h"
 
 EvohomeClient::EvohomeClient(const Config &config)
         : config(config) {
@@ -63,7 +64,7 @@ void EvohomeClient::login() {
     dataMap.insert(std::make_pair("Password", this->config.getPassword()));
     dataMap.insert(std::make_pair("Connection", "Keep-Alive"));
 
-    std::string content = HttpClient::request(url, headerList, dataMap);
+    std::string content = HttpClient::post(url, headerList, dataMap);
 
     // parse access token
     Json::Reader reader;
@@ -129,4 +130,58 @@ const bool EvohomeClient::hasZone(const std::string &zone) const {
     }
 
     return false;
+}
+
+const Zone &EvohomeClient::getZoneByName(const std::string &zone) const {
+
+    for (int i = 0; i < this->installationInfo.zones.size(); i++) {
+
+        if (this->installationInfo.zones[i].name == zone) {
+
+            return this->installationInfo.zones[i];
+        }
+    }
+
+    throw std::runtime_error("Zone not found.");
+}
+
+void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) const {
+
+    // url
+    std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/temperatureZone/" + zone.zoneId + "/heatSetpoint";
+
+    // headers
+    std::vector<std::string> headers(this->applicationHeader);
+    headers.push_back("Content-Type: application/json");
+
+    // data
+    std::string data = "";
+    if (until == "") {
+
+        // set permanently
+        data = "{\"HeatSetpointValue\":" + temperature + ",\"SetpointMode\":1,\"TimeUntil\":\"\"}";
+    }
+    else {
+
+        // set temporarily
+        data = "{\"HeatSetpointValue\":" + temperature + ",\"SetpointMode\":2,\"TimeUntil\":\"" + until + "\"}";
+    }
+
+    std::string content = HttpClient::put(url, headers, data);
+
+    // parse result (we shoud get {"id": "xxxxxxx"})
+    Json::Reader reader;
+    Json::Value obj;
+
+    if (!reader.parse(content, obj) || obj["id"].isNull()) {
+
+        std::cerr << "Could not set target temperature. Please try again." << std::endl;
+        exit(EXIT_TEMP_SET_FAILED);
+    }
+
+    std::cout << GREEN_LIGHT
+              << "Target temperature for " << zone.name << " set to " << temperature << " °C"
+              << ((until == "")? "": " until ") << until << "."
+              << RESET
+              << std::endl;
 }
