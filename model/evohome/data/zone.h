@@ -48,6 +48,7 @@ public:
     double temperature;
     double targetTemperature;
     std::string setpointMode;
+    std::string until;
 
     Zone(const std::string &zoneId, const std::string &modelType, const std::string &zoneType, const std::string &name);
 

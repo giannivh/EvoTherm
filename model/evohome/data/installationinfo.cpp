@@ -99,6 +99,7 @@ void InstallationInfo::parseTemperature(const std::string &jsonData) {
                 zone.temperature = temps[i]["temperatureStatus"]["temperature"].asDouble();
                 zone.targetTemperature = temps[i]["heatSetpointStatus"]["targetTemperature"].asDouble();
                 zone.setpointMode = temps[i]["heatSetpointStatus"]["setpointMode"].asString();
+                zone.until = temps[i]["heatSetpointStatus"]["until"].asString();
 
                 continue;
             }
