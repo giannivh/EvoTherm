@@ -133,9 +133,9 @@ void Terminal::printZones(const std::vector<Zone> &zones) {
         }
 
         // convert doubles
-        char tempD[5];
+        char tempD[6];
         sprintf(tempD, "%.2f", zones[i].temperature);
-        char spD[5];
+        char spD[6];
         sprintf(spD, "%.2f", zones[i].targetTemperature);
 
         // convert mode
