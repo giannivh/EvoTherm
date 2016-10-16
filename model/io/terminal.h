@@ -39,15 +39,15 @@ class Terminal {
 
 public:
 
-    void printHelp();
-    void printHelp(const int &exitCode);
-    void printZones(const std::vector<Zone> &zones);
+    void printHelp() const;
+    void printHelp(const int &exitCode) const;
+    void printZones(const std::vector<Zone> &zones, const std::string mode, const std::string modeUntil) const;
 
 private:
 
-    void printHelpOption(const std::string &shortOption, const std::string &longOption, const std::string &description);
-    void printHelpMode(const std::string &mode, const std::string &description);
-    void printHelpExample(const std::string &example);
+    void printHelpOption(const std::string &shortOption, const std::string &longOption, const std::string &description) const;
+    void printHelpMode(const std::string &mode, const std::string &description) const;
+    void printHelpExample(const std::string &example) const;
 
 };
 

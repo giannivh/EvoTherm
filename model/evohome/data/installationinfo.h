@@ -48,6 +48,9 @@ public:
     std::vector<Zone> zones;
     std::vector<Mode> modes;
 
+    std::string currentMode;
+    std::string currentModeUntil;
+
     void parseInstallationInfo(const std::string &jsonData);
     void parseTemperature(const std::string &jsonData);
 

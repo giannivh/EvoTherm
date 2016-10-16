@@ -39,3 +39,59 @@ const bool Mode::isValidMode(const std::string &mode) {
 
     return mode == "auto" || mode == "eco" || mode == "away" || mode == "dayoff" || mode == "off" || mode == "custom";
 }
+
+const std::string Mode::fromReadable(const std::string &mode) {
+
+    std::string converted = "Auto";
+
+    if (mode == "eco") {
+
+        converted = "AutoWithEco";
+    }
+    else if (mode == "away") {
+
+        converted = "Away";
+    }
+    else if (mode == "dayoff") {
+
+        converted = "DayOff";
+    }
+    else if (mode == "off") {
+
+        converted = "HeatingOff";
+    }
+    else if (mode == "custom") {
+
+        converted = "Custom";
+    }
+
+    return converted;
+}
+
+const std::string Mode::toReadable(const std::string &mode) {
+
+    std::string converted = "auto";
+
+    if (mode == "AutoWithEco") {
+
+        converted = "eco";
+    }
+    else if (mode == "Away") {
+
+        converted = "away";
+    }
+    else if (mode == "DayOff") {
+
+        converted = "dayoff";
+    }
+    else if (mode == "HeatingOff") {
+
+        converted = "off";
+    }
+    else if (mode == "Custom") {
+
+        converted = "custom";
+    }
+
+    return converted;
+}

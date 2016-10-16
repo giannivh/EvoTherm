@@ -83,6 +83,24 @@ public:
      */
     void cancelOverride(const Zone &zone);
 
+    /**
+     * Sets the thermostat mode.
+     *
+     * @param mode the mode to set.
+     * @param until until the given date, leave blank to make permanent.
+     */
+    void setMode(const std::string &mode, const std::string &until);
+
+    /**
+     * @return the thermostat's current mode.
+     */
+    const std::string &getCurrentMode() const;
+
+    /**
+     * @return the thermostat's current mode until.
+     */
+    const std::string &getCurrentModeUntil() const;
+
 private:
 
     Config config;

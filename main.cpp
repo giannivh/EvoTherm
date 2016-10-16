@@ -59,12 +59,13 @@ int main(int argc, char* argv[]) {
     if (argc == 1 || cmdParser.cmdOptionGiven("-l", "--list")) {
 
         // show the current status of all zones
-        terminal.printZones(evohomeClient.getAllZones());
+        terminal.printZones(evohomeClient.getAllZones(), evohomeClient.getCurrentMode(), evohomeClient.getCurrentModeUntil());
     }
     else if (cmdParser.cmdOptionGiven("-m", "--mode")) {
 
-        // set thermostat mode
+        // get and check mode
         const std::string &mode = cmdParser.getCMDOptionValue("-m", "--mode");
+        const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
 
         if (mode == CMDParser::NO_VALUE || !Mode::isValidMode(mode)) {
 
@@ -73,8 +74,15 @@ int main(int argc, char* argv[]) {
             exit(EXIT_INVALID_MODE);
         }
 
-        std::cout << "TODO: Setting mode to " << mode << std::endl;
-        // todo set mode
+        // parse until
+        std::string untilParsed = DateUtil::toUTC(until);
+
+        // set thermostat mode
+        evohomeClient.setMode(mode, untilParsed);
+
+        // show the current status of all zones
+        std::cout << std::endl;
+        terminal.printZones(evohomeClient.getAllZones(), evohomeClient.getCurrentMode(), evohomeClient.getCurrentModeUntil());
     }
     else if (cmdParser.cmdOptionGiven("-z", "--zone")) {
 
@@ -97,7 +105,7 @@ int main(int argc, char* argv[]) {
 
             // show the current status of all zones
             std::cout << std::endl;
-            terminal.printZones(evohomeClient.getAllZones());
+            terminal.printZones(evohomeClient.getAllZones(), evohomeClient.getCurrentMode(), evohomeClient.getCurrentModeUntil());
         }
         else {
 
@@ -130,7 +138,7 @@ int main(int argc, char* argv[]) {
 
             // show the current status of all zones
             std::cout << std::endl;
-            terminal.printZones(evohomeClient.getAllZones());
+            terminal.printZones(evohomeClient.getAllZones(), evohomeClient.getCurrentMode(), evohomeClient.getCurrentModeUntil());
         }
     }
     else {

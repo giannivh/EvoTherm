@@ -216,3 +216,62 @@ void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) 
     // update temperatures
     this->getTemperatures();
 }
+
+void EvohomeClient::setMode(const std::string &mode, const std::string &until) {
+
+    // convert mode
+    std::string modeConverted = Mode::fromReadable(mode);
+
+    // url
+    std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/temperatureControlSystem/" +
+            this->installationInfo.systemId + "/mode";
+
+    // headers
+    std::vector<std::string> headers(this->applicationHeader);
+    headers.push_back("Content-Type: application/json");
+
+    // data
+    std::string data = "";
+    if (until == "") {
+
+        // set permanently
+        data = "{\"SystemMode\":\"" + modeConverted + "\",\"TimeUntil\":\"\",\"Permanent\":true}";
+    }
+    else {
+
+        // set temporarily
+        data = "{\"SystemMode\":\"" + modeConverted + "\",\"TimeUntil\":\"" + until + "\",\"Permanent\":false}";
+    }
+
+    // make request
+    std::string content = HttpClient::put(url, headers, data);
+
+    // parse result (we shoud get {"id": "xxxxxxx"})
+    Json::Reader reader;
+    Json::Value obj;
+
+    if (!reader.parse(content, obj) || obj["id"].isNull()) {
+
+        std::cerr << "Could not set mode. Please try again." << std::endl;
+        exit(EXIT_MODE_SET_FAILED);
+    }
+
+    // print success
+    std::cout << GREEN_LIGHT
+              << "Mode successfully set to " << mode << "."
+              << RESET
+              << std::endl;
+
+    // update temperatures
+    this->getTemperatures();
+}
+
+const std::string &EvohomeClient::getCurrentMode() const {
+
+    return this->installationInfo.currentMode;
+}
+
+const std::string &EvohomeClient::getCurrentModeUntil() const {
+
+    return this->installationInfo.currentModeUntil;
+}

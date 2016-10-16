@@ -51,6 +51,8 @@ public:
     Mode(const std::string &systemMode, const bool &canBePermanent, const bool &canBeTemporary);
 
     const static bool isValidMode(const std::string &mode);
+    const static std::string fromReadable(const std::string &mode);
+    const static std::string toReadable(const std::string &mode);
 
 };
 

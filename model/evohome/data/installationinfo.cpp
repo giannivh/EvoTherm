@@ -32,6 +32,7 @@
 #include "installationinfo.h"
 #include "../../../ext/jsoncpp/json/json.h"
 #include "../../exitcode.h"
+#include "../../util/dateutil.h"
 
 void InstallationInfo::parseInstallationInfo(const std::string &jsonData) {
 
@@ -104,5 +105,18 @@ void InstallationInfo::parseTemperature(const std::string &jsonData) {
                 continue;
             }
         }
+    }
+
+    // parse current mode
+    currentMode = Mode::toReadable(obj["gateways"][0]["temperatureControlSystems"][0]["systemModeStatus"]["mode"].asString());
+    if (!obj["gateways"][0]["temperatureControlSystems"][0]["systemModeStatus"]["isPermanent"].asBool()) {
+
+        currentModeUntil = DateUtil::toLocal(
+                obj["gateways"][0]["temperatureControlSystems"][0]["systemModeStatus"]["timeUntil"].asString());
+    }
+    else {
+
+        // just to make it reset after an update
+        currentModeUntil = "";
     }
 }
