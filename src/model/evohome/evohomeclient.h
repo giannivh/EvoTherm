@@ -50,9 +50,9 @@ public:
     EvohomeClient(const Config &config);
 
     /**
-     * @return all zones for this account.
+     * @return the installation info for this account.
      */
-    const std::vector<Zone> &getAllZones() const;
+    const InstallationInfo &getInstallationInfo() const;
 
     /**
      * Checks whether the given zone is available.
@@ -91,16 +91,6 @@ public:
      */
     void setMode(const std::string &mode, const std::string &until);
 
-    /**
-     * @return the thermostat's current mode.
-     */
-    const std::string &getCurrentMode() const;
-
-    /**
-     * @return the thermostat's current mode until.
-     */
-    const std::string &getCurrentModeUntil() const;
-
 private:
 
     Config config;
@@ -111,9 +101,9 @@ private:
     InstallationInfo installationInfo;
 
     void login();
-    void getUserAccount();
-    void getInstallationInfo();
-    void getTemperatures();
+    void fetchUserAccount();
+    void fetchInstallationInfo();
+    void fetchTemperatures();
 
     void setZoneTargetTemp(const Zone &zone, const std::string data);
 };

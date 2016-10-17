@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
 
     // show the current status of all zones
     std::cout << std::endl;
-    terminal.printZones(evohomeClient.getAllZones(), evohomeClient.getCurrentMode(), evohomeClient.getCurrentModeUntil());
+    terminal.printZones(evohomeClient.getInstallationInfo());
 
     return 0;
 }

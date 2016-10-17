@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 #include "../evohome/data/zone.h"
+#include "../evohome/data/installationinfo.h"
 
 class Terminal {
 
@@ -41,7 +42,7 @@ public:
 
     void printHelp() const;
     void printHelp(const int &exitCode) const;
-    void printZones(const std::vector<Zone> &zones, const std::string mode, const std::string modeUntil) const;
+    void printZones(const InstallationInfo &installationInfo) const;
 
 private:
 

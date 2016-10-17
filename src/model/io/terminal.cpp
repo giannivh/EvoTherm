@@ -94,13 +94,14 @@ void Terminal::printHelpExample(const std::string &example) const {
     std::cout << "\t$ " << APP_EXEC << " " << example << std::endl;
 }
 
-void Terminal::printZones(const std::vector<Zone> &zones, const std::string mode, const std::string modeUntil) const {
+void Terminal::printZones(const InstallationInfo &installationInfo) const {
 
     // print mode
-    std::cout << "Your thermostat is in " << BOLD << mode << RESET << " mode";
-    if (modeUntil != "") {
+    std::cout << "Your " << installationInfo.modelType << " is in " <<
+              BOLD << installationInfo.currentMode << RESET << " mode";
+    if (installationInfo.currentModeUntil != "") {
 
-        std::cout << " until " << BOLD << modeUntil << RESET;
+        std::cout << " until " << BOLD << installationInfo.currentModeUntil << RESET;
     }
     std::cout << "." << std::endl << std::endl;
 
@@ -112,6 +113,7 @@ void Terminal::printZones(const std::vector<Zone> &zones, const std::string mode
            std::string(27,'-').c_str());
 
     // print data
+    const std::vector<Zone> &zones = installationInfo.zones;
     for (int i = 0; i < zones.size(); i++) {
 
         // set color

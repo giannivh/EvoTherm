@@ -41,9 +41,9 @@ EvohomeClient::EvohomeClient(const Config &config)
         : config(config) {
 
     this->login();
-    this->getUserAccount();
-    this->getInstallationInfo();
-    this->getTemperatures();
+    this->fetchUserAccount();
+    this->fetchInstallationInfo();
+    this->fetchTemperatures();
 }
 
 void EvohomeClient::login() {
@@ -87,7 +87,7 @@ void EvohomeClient::login() {
     this->applicationHeader.push_back("Accept: application/json, application/xml, text/json, text/x-json, text/javascript, text/xml");
 }
 
-void EvohomeClient::getUserAccount() {
+void EvohomeClient::fetchUserAccount() {
 
     // get account info
     std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/userAccount";
@@ -97,7 +97,7 @@ void EvohomeClient::getUserAccount() {
     this->userInfo.parse(content);
 }
 
-void EvohomeClient::getInstallationInfo() {
+void EvohomeClient::fetchInstallationInfo() {
 
     // get installation info
     std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/location/installationInfo?userId=" +
@@ -108,7 +108,7 @@ void EvohomeClient::getInstallationInfo() {
     this->installationInfo.parseInstallationInfo(content);
 }
 
-void EvohomeClient::getTemperatures() {
+void EvohomeClient::fetchTemperatures() {
 
     // get temperatures
     std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/location/" + this->installationInfo.locationId +
@@ -119,9 +119,9 @@ void EvohomeClient::getTemperatures() {
     this->installationInfo.parseTemperature(content);
 }
 
-const std::vector<Zone> &EvohomeClient::getAllZones() const {
+const InstallationInfo &EvohomeClient::getInstallationInfo() const {
 
-    return this->installationInfo.zones;
+    return this->installationInfo;
 }
 
 const bool EvohomeClient::hasZone(const std::string &zone) const {
@@ -214,7 +214,7 @@ void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) 
     }
 
     // update temperatures
-    this->getTemperatures();
+    this->fetchTemperatures();
 }
 
 void EvohomeClient::setMode(const std::string &mode, const std::string &until) {
@@ -263,15 +263,5 @@ void EvohomeClient::setMode(const std::string &mode, const std::string &until) {
               << std::endl;
 
     // update temperatures
-    this->getTemperatures();
-}
-
-const std::string &EvohomeClient::getCurrentMode() const {
-
-    return this->installationInfo.currentMode;
-}
-
-const std::string &EvohomeClient::getCurrentModeUntil() const {
-
-    return this->installationInfo.currentModeUntil;
+    this->fetchTemperatures();
 }
