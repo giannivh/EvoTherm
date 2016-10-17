@@ -93,3 +93,5 @@ ENDIF(CURL_FOUND)
 
 add_executable(evotherm ${SOURCE_FILES})
 target_link_libraries(evotherm curl)
+
+install(TARGETS evotherm RUNTIME DESTINATION bin)
