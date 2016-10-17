@@ -4,21 +4,21 @@ project(evotherm)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES
-        ext/jsoncpp/jsoncpp.cpp ext/jsoncpp/json/json.h ext/jsoncpp/json/json-forwards.h
-        main.cpp
-        model/exitcode.h
-        model/markup.h
-        model/app.h
-        model/config.cpp model/config.h
-        model/io/httpclient.cpp model/io/httpclient.h
-        model/io/cmdparser.cpp model/io/cmdparser.h
-        model/io/terminal.cpp model/io/terminal.h
-        model/evohome/evohomeclient.cpp model/evohome/evohomeclient.h
-        model/evohome/data/userinfo.cpp model/evohome/data/userinfo.h
-        model/evohome/data/installationinfo.cpp model/evohome/data/installationinfo.h
-        model/evohome/data/zone.cpp model/evohome/data/zone.h
-        model/evohome/data/mode.cpp model/evohome/data/mode.h
-        model/util/dateutil.cpp model/util/dateutil.h)
+        src/ext/jsoncpp/jsoncpp.cpp src/ext/jsoncpp/json/json.h src/ext/jsoncpp/json/json-forwards.h
+        src/main.cpp
+        src/model/exitcode.h
+        src/model/markup.h
+        src/model/app.h
+        src/model/config.cpp src/model/config.h
+        src/model/io/httpclient.cpp src/model/io/httpclient.h
+        src/model/io/cmdparser.cpp src/model/io/cmdparser.h
+        src/model/io/terminal.cpp src/model/io/terminal.h
+        src/model/evohome/evohomeclient.cpp src/model/evohome/evohomeclient.h
+        src/model/evohome/data/userinfo.cpp src/model/evohome/data/userinfo.h
+        src/model/evohome/data/installationinfo.cpp src/model/evohome/data/installationinfo.h
+        src/model/evohome/data/zone.cpp src/model/evohome/data/zone.h
+        src/model/evohome/data/mode.cpp src/model/evohome/data/mode.h
+        src/model/util/dateutil.cpp src/model/util/dateutil.h)
 
 # Find curl
 # Find the native CURL headers and libraries
