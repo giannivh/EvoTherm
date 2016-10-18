@@ -132,7 +132,7 @@ const Config Config::create(const Terminal &terminal) {
 
     // chmod 600
 #ifndef _WIN32
-    chmod(configLocation.c_str(), (__mode_t) strtol("0600", 0, 8));
+    chmod(configLocation.c_str(), 0600);
 #endif
 
     terminal.printMessage("\nConfig file created at \"" + configLocation + "\"!");
