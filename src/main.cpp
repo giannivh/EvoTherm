@@ -70,8 +70,7 @@ int main(int argc, char* argv[]) {
 
             if (mode == CMDParser::NO_VALUE || !Mode::isValidMode(mode)) {
 
-                std::cerr << "Invalid mode." << std::endl;
-                exit(EXIT_INVALID_MODE);
+                throw EvoThermException("Invalid mode.", EXIT_INVALID_MODE);
             }
 
             // parse until
@@ -87,8 +86,7 @@ int main(int argc, char* argv[]) {
             // check zone
             if (zone == CMDParser::NO_VALUE || !evohomeClient.hasZone(zone)) {
 
-                std::cerr << "Invalid zone." << std::endl;
-                exit(EXIT_INVALID_ZONE);
+                throw EvoThermException("Invalid zone.", EXIT_INVALID_ZONE);
             }
 
             // operation on zone
@@ -104,8 +102,7 @@ int main(int argc, char* argv[]) {
 
                 if (temp == CMDParser::NO_VALUE) {
 
-                    std::cerr << "Invalid zone parameters. --temp TEMP is required." << std::endl;
-                    exit(EXIT_INVALID_ZONE_PARAM);
+                    throw EvoThermException("Invalid zone parameters. --temp TEMP is required.", EXIT_INVALID_ZONE_PARAM);
                 }
 
                 // validate temperature
@@ -113,8 +110,7 @@ int main(int argc, char* argv[]) {
                 strtod(temp.c_str(), &endptr);
                 if (*endptr != '\0' || endptr == temp) {
 
-                    std::cerr << "Invalid temperature " << temp << "." << std::endl;
-                    exit(EXIT_INVALID_TEMP);
+                    throw EvoThermException("Invalid temperature " + temp + ".", EXIT_INVALID_TEMP);
                 }
 
                 // parse until
@@ -126,7 +122,7 @@ int main(int argc, char* argv[]) {
         } else {
 
             // unknown option given
-            std::cerr << "Unknown option given." << std::endl;
+            terminal.printError("Unknown option given.");
 
             // print help and exit
             terminal.printHelp(EXIT_UNKNOWN_CMD_OPTION);

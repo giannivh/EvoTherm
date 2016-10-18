@@ -44,6 +44,7 @@ public:
     void printHelp() const;
     void printHelp(const int &exitCode) const;
     void printZones(const InstallationInfo &installationInfo) const;
+    void printError(const std::string &message) const;
     void printFatalError(const EvoThermException &evoThermException) const;
 
 private:

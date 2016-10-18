@@ -186,3 +186,8 @@ void Terminal::printFatalError(const EvoThermException &evoThermException) const
 
     exit(evoThermException.getExitCode());
 }
+
+void Terminal::printError(const std::string &message) const {
+
+    std::cerr << message << std::endl;
+}
