@@ -33,6 +33,7 @@
 #include "../../../ext/jsoncpp/json/json.h"
 #include "../../exitcode.h"
 #include "../../util/dateutil.h"
+#include "../../exception/evothermexception.h"
 
 void InstallationInfo::parseInstallationInfo(const std::string &jsonData) {
 
@@ -41,8 +42,7 @@ void InstallationInfo::parseInstallationInfo(const std::string &jsonData) {
 
     if (!reader.parse(jsonData, obj) || obj[0]["gateways"][0]["temperatureControlSystems"][0]["systemId"].isNull()) {
 
-        std::cerr << "Could not get installation data." << std::endl;
-        exit(EXIT_INSTALL_DATA_ERROR);
+        throw EvoThermException("Could not get installation data.", EXIT_INSTALL_DATA_ERROR);
     }
 
     // parse useful data
@@ -83,8 +83,7 @@ void InstallationInfo::parseTemperature(const std::string &jsonData) {
 
     if (!reader.parse(jsonData, obj) || obj["gateways"][0]["temperatureControlSystems"][0]["systemId"].isNull()) {
 
-        std::cerr << "Could not get temperature data." << std::endl;
-        exit(EXIT_TEMP_DATA_ERROR);
+        throw EvoThermException("Could not get temperature data.", EXIT_TEMP_DATA_ERROR);
     }
 
     // parse zone temperatures

@@ -179,3 +179,10 @@ void Terminal::printZones(const InstallationInfo &installationInfo) const {
     printf("+%s+%s+%s+%s+\n", std::string(20,'-').c_str(), std::string(15,'-').c_str(), std::string(15,'-').c_str(),
            std::string(27,'-').c_str());
 }
+
+void Terminal::printFatalError(const EvoThermException &evoThermException) const {
+
+    std::cerr << evoThermException.what() << std::endl;
+
+    exit(evoThermException.getExitCode());
+}

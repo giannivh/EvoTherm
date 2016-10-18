@@ -35,6 +35,7 @@
 #include "model/io/terminal.h"
 #include "model/exitcode.h"
 #include "model/util/dateutil.h"
+#include "model/exception/evothermexception.h"
 
 int main(int argc, char* argv[]) {
 
@@ -47,94 +48,98 @@ int main(int argc, char* argv[]) {
         terminal.printHelp();
     }
 
-    // assert config validity
-    Config config = Config::assertValidity();
+    try {
 
-    // we need data if we get here...
-    EvohomeClient evohomeClient = EvohomeClient(config);
+        // assert config validity
+        Config config = Config::assertValidity();
 
-    // parse options
-    if (argc == 1 || cmdParser.cmdOptionGiven("-l", "--list")) {
+        // we need data if we get here...
+        EvohomeClient evohomeClient = EvohomeClient(config);
 
-        // list will be printed at the end.
-        // nothing to do here...
-    }
-    else if (cmdParser.cmdOptionGiven("-m", "--mode")) {
 
-        // get and check mode
-        const std::string &mode = cmdParser.getCMDOptionValue("-m", "--mode");
-        const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
+        // parse options
+        if (argc == 1 || cmdParser.cmdOptionGiven("-l", "--list")) {
 
-        if (mode == CMDParser::NO_VALUE || !Mode::isValidMode(mode)) {
+            // list will be printed at the end.
+            // nothing to do here...
+        } else if (cmdParser.cmdOptionGiven("-m", "--mode")) {
 
-            std::cerr << "Invalid mode." << std::endl;
-            exit(EXIT_INVALID_MODE);
-        }
-
-        // parse until
-        std::string untilParsed = DateUtil::toUTC(until);
-
-        // set thermostat mode
-        evohomeClient.setMode(mode, untilParsed);
-    }
-    else if (cmdParser.cmdOptionGiven("-z", "--zone")) {
-
-        // get zone
-        const std::string &zone = cmdParser.getCMDOptionValue("-z", "--zone");
-
-        // check zone
-        if (zone == CMDParser::NO_VALUE || !evohomeClient.hasZone(zone)) {
-
-            std::cerr << "Invalid zone." << std::endl;
-            exit(EXIT_INVALID_ZONE);
-        }
-
-        // operation on zone
-        if (cmdParser.cmdOptionGiven("-c", "--cancel")) {
-
-            // cancel override
-            evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
-        }
-        else {
-
-            // set setpoint temperature
-            const std::string &temp = cmdParser.getCMDOptionValue("-t", "--temp");
+            // get and check mode
+            const std::string &mode = cmdParser.getCMDOptionValue("-m", "--mode");
             const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
 
-            if (temp == CMDParser::NO_VALUE) {
+            if (mode == CMDParser::NO_VALUE || !Mode::isValidMode(mode)) {
 
-                std::cerr << "Invalid zone parameters. --temp TEMP is required." << std::endl;
-                exit(EXIT_INVALID_ZONE_PARAM);
-            }
-
-            // validate temperature
-            char* endptr = 0;
-            strtod(temp.c_str(), &endptr);
-            if (*endptr != '\0' || endptr == temp) {
-
-                std::cerr << "Invalid temperature " << temp << "." << std::endl;
-                exit(EXIT_INVALID_TEMP);
+                std::cerr << "Invalid mode." << std::endl;
+                exit(EXIT_INVALID_MODE);
             }
 
             // parse until
             std::string untilParsed = DateUtil::toUTC(until);
 
-            // set setpoint temperature
-            evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
+            // set thermostat mode
+            evohomeClient.setMode(mode, untilParsed);
+        } else if (cmdParser.cmdOptionGiven("-z", "--zone")) {
+
+            // get zone
+            const std::string &zone = cmdParser.getCMDOptionValue("-z", "--zone");
+
+            // check zone
+            if (zone == CMDParser::NO_VALUE || !evohomeClient.hasZone(zone)) {
+
+                std::cerr << "Invalid zone." << std::endl;
+                exit(EXIT_INVALID_ZONE);
+            }
+
+            // operation on zone
+            if (cmdParser.cmdOptionGiven("-c", "--cancel")) {
+
+                // cancel override
+                evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
+            } else {
+
+                // set setpoint temperature
+                const std::string &temp = cmdParser.getCMDOptionValue("-t", "--temp");
+                const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
+
+                if (temp == CMDParser::NO_VALUE) {
+
+                    std::cerr << "Invalid zone parameters. --temp TEMP is required." << std::endl;
+                    exit(EXIT_INVALID_ZONE_PARAM);
+                }
+
+                // validate temperature
+                char *endptr = 0;
+                strtod(temp.c_str(), &endptr);
+                if (*endptr != '\0' || endptr == temp) {
+
+                    std::cerr << "Invalid temperature " << temp << "." << std::endl;
+                    exit(EXIT_INVALID_TEMP);
+                }
+
+                // parse until
+                std::string untilParsed = DateUtil::toUTC(until);
+
+                // set setpoint temperature
+                evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
+            }
+        } else {
+
+            // unknown option given
+            std::cerr << "Unknown option given." << std::endl;
+
+            // print help and exit
+            terminal.printHelp(EXIT_UNKNOWN_CMD_OPTION);
         }
+
+        // show the current status of all zones
+        std::cout << std::endl;
+        terminal.printZones(evohomeClient.getInstallationInfo());
     }
-    else {
+    catch (EvoThermException &evoThermException) {
 
-        // unknown option given
-        std::cerr << "Unknown option given." << std::endl;
-
-        // print help and exit
-        terminal.printHelp(EXIT_UNKNOWN_CMD_OPTION);
+        terminal.printFatalError(evoThermException);
     }
-
-    // show the current status of all zones
-    std::cout << std::endl;
-    terminal.printZones(evohomeClient.getInstallationInfo());
 
     return 0;
 }

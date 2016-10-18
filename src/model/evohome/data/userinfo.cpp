@@ -33,6 +33,7 @@
 #include "userinfo.h"
 #include "../../../ext/jsoncpp/json/json.h"
 #include "../../exitcode.h"
+#include "../../exception/evothermexception.h"
 
 void UserInfo::parse(const std::string &jsonData) {
 
@@ -41,8 +42,7 @@ void UserInfo::parse(const std::string &jsonData) {
 
     if (!reader.parse(jsonData, obj) || obj["userId"].isNull()) {
 
-        std::cerr << "Could not get user data." << std::endl;
-        exit(EXIT_USER_DATA_ERROR);
+        throw EvoThermException("Could not get user data.", EXIT_USER_DATA_ERROR);
     }
 
     this->userId = obj["userId"].asString();

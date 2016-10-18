@@ -35,6 +35,7 @@
 #include <vector>
 #include "../evohome/data/zone.h"
 #include "../evohome/data/installationinfo.h"
+#include "../exception/evothermexception.h"
 
 class Terminal {
 
@@ -43,6 +44,7 @@ public:
     void printHelp() const;
     void printHelp(const int &exitCode) const;
     void printZones(const InstallationInfo &installationInfo) const;
+    void printFatalError(const EvoThermException &evoThermException) const;
 
 private:
 

@@ -18,7 +18,8 @@ set(SOURCE_FILES
         src/model/evohome/data/installationinfo.cpp src/model/evohome/data/installationinfo.h
         src/model/evohome/data/zone.cpp src/model/evohome/data/zone.h
         src/model/evohome/data/mode.cpp src/model/evohome/data/mode.h
-        src/model/util/dateutil.cpp src/model/util/dateutil.h)
+        src/model/util/dateutil.cpp src/model/util/dateutil.h
+        src/model/exception/evothermexception.cpp src/model/exception/evothermexception.h)
 
 # Find curl
 # Find the native CURL headers and libraries

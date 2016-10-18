@@ -36,6 +36,7 @@
 #include "../exitcode.h"
 #include "../markup.h"
 #include "../util/dateutil.h"
+#include "../exception/evothermexception.h"
 
 EvohomeClient::EvohomeClient(const Config &config)
         : config(config) {
@@ -74,8 +75,7 @@ void EvohomeClient::login() {
 
     if (!reader.parse(content, obj) || obj["access_token"].isNull()) {
 
-        std::cerr << "Could not log in. Please double check your credentials." << std::endl;
-        exit(EXIT_LOGIN_FAILED);
+        throw EvoThermException("Could not log in. Please double check your credentials.", EXIT_LOGIN_FAILED);
     }
 
     this->accessToken = obj["access_token"].asString();
@@ -147,7 +147,7 @@ const Zone &EvohomeClient::getZoneByName(const std::string &zone) const {
         }
     }
 
-    throw std::runtime_error("Zone not found.");
+    throw EvoThermException("Zone not found.", EXIT_INVALID_ZONE);
 }
 
 void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &temperature, const std::string &until) {
@@ -209,8 +209,7 @@ void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string &data)
 
     if (!reader.parse(content, obj) || obj["id"].isNull()) {
 
-        std::cerr << "Could not set target temperature. Please try again." << std::endl;
-        exit(EXIT_TEMP_SET_FAILED);
+        throw EvoThermException("Could not set target temperature. Please try again.", EXIT_TEMP_SET_FAILED);
     }
 
     // update temperatures
@@ -252,8 +251,7 @@ void EvohomeClient::setMode(const std::string &mode, const std::string &until) {
 
     if (!reader.parse(content, obj) || obj["id"].isNull()) {
 
-        std::cerr << "Could not set mode. Please try again." << std::endl;
-        exit(EXIT_MODE_SET_FAILED);
+        throw EvoThermException("Could not set mode. Please try again.", EXIT_MODE_SET_FAILED);
     }
 
     // print success
