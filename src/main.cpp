@@ -35,7 +35,6 @@
 #include "model/io/terminal.h"
 #include "model/exitcode.h"
 #include "model/util/dateutil.h"
-#include "model/exception/evothermexception.h"
 
 int main(int argc, char* argv[]) {
 
