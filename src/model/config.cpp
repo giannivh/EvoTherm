@@ -37,7 +37,7 @@
 #include <pwd.h>
 #include <fstream>
 
-Config Config::assertValidity() {
+const Config Config::assertValidity() {
 
     // config location
     std::string configLocation = getConfigLocation();
@@ -100,7 +100,7 @@ Config Config::assertValidity() {
     return Config(username, password);
 }
 
-Config Config::create(const Terminal &terminal) {
+const Config Config::create(const Terminal &terminal) {
 
     // config location
     std::string configDirectory = getConfigDirectory();

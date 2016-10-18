@@ -41,8 +41,8 @@ public:
     const std::string username;
     const std::string password;
 
-    static Config assertValidity();
-    static Config create(const Terminal &terminal);
+    static const Config assertValidity();
+    static const Config create(const Terminal &terminal);
 
 private:
 
