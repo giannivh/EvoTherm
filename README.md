@@ -39,6 +39,17 @@ If you get an error on `make install`, issue `sudo make install`.
 
 Use `evotherm --help` to get all options.
 
+### Config
+
+If you're running EvoTherm for the first time, you have to create a configuration file which contains your Honeywell My Total Connect Comfort credentials. 
+You can do this manually, or let EvoTherm do it for you by issuing:
+
+```
+$ evotherm --config
+```
+
+And follow the on-screen instructions.
+
 ### List
 
 To list your zones, issue:
