@@ -191,3 +191,8 @@ void Terminal::printError(const std::string &message) const {
 
     std::cerr << message << std::endl;
 }
+
+void Terminal::printSuccess(const std::string &message) const {
+
+    std::cout << GREEN_LIGHT << message << RESET << std::endl << std::endl;
+}

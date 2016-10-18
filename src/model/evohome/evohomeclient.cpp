@@ -167,13 +167,6 @@ void EvohomeClient::setTargetTemperature(const Zone &zone, const std::string &te
 
     // make request
     this->setZoneTargetTemp(zone, data);
-
-    // print success
-    std::cout << GREEN_LIGHT
-              << "Target temperature for " << zone.name << " set to " << temperature << " °C"
-              << ((until == "")? "": " until ") << DateUtil::toLocal(until) << "."
-              << RESET
-              << std::endl;
 }
 
 void EvohomeClient::cancelOverride(const Zone &zone) {
@@ -183,12 +176,6 @@ void EvohomeClient::cancelOverride(const Zone &zone) {
 
     // make request
     this->setZoneTargetTemp(zone, data);
-
-    // print success
-    std::cout << GREEN_LIGHT
-              << "Target temperature override for " << zone.name << " cancelled."
-              << RESET
-              << std::endl;
 }
 
 void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string &data) {
@@ -253,12 +240,6 @@ void EvohomeClient::setMode(const std::string &mode, const std::string &until) {
 
         throw EvoThermException("Could not set mode. Please try again.", EXIT_MODE_SET_FAILED);
     }
-
-    // print success
-    std::cout << GREEN_LIGHT
-              << "Mode successfully set to " << mode << "."
-              << RESET
-              << std::endl;
 
     // update temperatures
     this->fetchTemperatures();

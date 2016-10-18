@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
 
             // set thermostat mode
             evohomeClient.setMode(mode, untilParsed);
+            terminal.printSuccess("Mode successfully set to " + mode + ".");
         } else if (cmdParser.cmdOptionGiven("-z", "--zone")) {
 
             // get zone
@@ -93,6 +94,7 @@ int main(int argc, char* argv[]) {
 
                 // cancel override
                 evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
+                terminal.printSuccess("Target temperature override for " + zone + " cancelled.");
             } else {
 
                 // set setpoint temperature
@@ -117,6 +119,8 @@ int main(int argc, char* argv[]) {
 
                 // set setpoint temperature
                 evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
+                terminal.printSuccess("Target temperature for " + zone + " set to " + temp + " °C" +
+                                              ((until == "")? "": " until ") + DateUtil::toLocal(until) + ".");
             }
         } else {
 
@@ -128,7 +132,6 @@ int main(int argc, char* argv[]) {
         }
 
         // show the current status of all zones
-        std::cout << std::endl;
         terminal.printZones(evohomeClient.getInstallationInfo());
     }
     catch (EvoThermException &evoThermException) {

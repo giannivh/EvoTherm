@@ -46,6 +46,7 @@ public:
     void printZones(const InstallationInfo &installationInfo) const;
     void printError(const std::string &message) const;
     void printFatalError(const EvoThermException &evoThermException) const;
+    void printSuccess(const std::string &message) const;
 
 private:
 

@@ -31,6 +31,7 @@
 #include <iostream>
 #include "httpclient.h"
 #include "../exitcode.h"
+#include "../exception/evothermexception.h"
 
 std::string HttpClient::request(const std::string &url) {
 
@@ -136,8 +137,7 @@ CURL *HttpClient::initCURL() {
 
     if (!curl) {
 
-        std::cerr << "Error starting cURL" << std::endl;
-        exit(EXIT_CURL_ERROR);
+        throw EvoThermException("Error starting cURL", EXIT_CURL_ERROR);
     }
 
     return curl;
