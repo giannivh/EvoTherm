@@ -31,7 +31,6 @@
 #include "config.h"
 #include "exitcode.h"
 #include "exception/evothermexception.h"
-#include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h>

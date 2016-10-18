@@ -34,8 +34,6 @@
 #include "../io/httpclient.h"
 #include "../../ext/jsoncpp/json/json.h"
 #include "../exitcode.h"
-#include "../markup.h"
-#include "../util/dateutil.h"
 #include "../exception/evothermexception.h"
 
 EvohomeClient::EvohomeClient(const Config &config)
