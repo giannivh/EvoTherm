@@ -71,10 +71,16 @@ $ evotherm --zone "My Zone" --cancel
 
 ### Set mode
 
-To change the mode of your thermostat, issue:
+To change the mode of your thermostat permanently, issue:
 
 ```
 $ evotherm --mode auto
+```
+
+To change the mode of your thermostat temporarily, issue:
+
+```
+$ evotherm --mode auto --until "2016-10-17 22:30:00"
 ```
 
 Where `--mode` is one of the following:
