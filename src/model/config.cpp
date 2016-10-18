@@ -30,7 +30,6 @@
 
 #include "config.h"
 #include "exitcode.h"
-#include "exception/evothermexception.h"
 #include "app.h"
 #include <sys/stat.h>
 #include <unistd.h>
