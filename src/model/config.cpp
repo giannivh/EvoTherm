@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "exitcode.h"
+#include "exception/evothermexception.h"
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -52,13 +53,14 @@ Config Config::assertValidity() {
     struct stat buffer;
     if (stat(configLocation.c_str(), &buffer) != 0) {
 
-        std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-        std::cout << "@     WARNING: SETTINGS FILE NOT FOUND     @" << std::endl;
-        std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-        std::cout << "Please create one at '" << configLocation << "' with following data:" << std::endl;
-        std::cout << "ET_USERNAME=your_username_here" << std::endl;
-        std::cout << "ET_PASSWORD=your_password_here" << std::endl;
-        exit(EXIT_NO_CONFIG);
+        std::string message = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
+        message += "@     WARNING: SETTINGS FILE NOT FOUND     @\n";
+        message += "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
+        message += "Please create one at '" + configLocation + "' with following data:\n";
+        message += "ET_USERNAME=your_username_here\n";
+        message += "ET_PASSWORD=your_password_here";
+
+        throw EvoThermException(message, EXIT_NO_CONFIG);
     }
 
     // check file permissions
@@ -67,13 +69,14 @@ Config Config::assertValidity() {
     snprintf(chmod, 4, "%o", statchmod);
     if (std::string(chmod) != "600") {
 
-        std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-        std::cout << "@     WARNING: UNPROTECTED SETTINGS FILE     @" << std::endl;
-        std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-        std::cout << "Permissions " << chmod << " for '" << configLocation << "' are too open." << std::endl;
-        std::cout << "The file should not be accessible by other users." << std::endl;
-        std::cout << "Please change the file's permissions to 600." << std::endl;
-        exit(EXIT_INVALID_CONFIG);
+        std::string message = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
+        message += "@     WARNING: UNPROTECTED SETTINGS FILE     @\n";
+        message += "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
+        message += "Permissions " + std::string(chmod) + " for '" + configLocation + "' are too open.\n";
+        message += "The file should not be accessible by other users.\n";
+        message += "Please change the file's permissions to 600.";
+
+        throw EvoThermException(message, EXIT_INVALID_CONFIG);
     }
 
     // parse file

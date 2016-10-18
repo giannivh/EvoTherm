@@ -37,14 +37,14 @@ class Config {
 
 public:
 
-    Config(std::string username, std::string password);
-
     std::string getUsername();
     std::string getPassword();
 
     static Config assertValidity();
 
 private:
+
+    Config(std::string username, std::string password);
 
     std::string username;
     std::string password;

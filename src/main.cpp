@@ -55,7 +55,6 @@ int main(int argc, char* argv[]) {
         // we need data if we get here...
         EvohomeClient evohomeClient = EvohomeClient(config);
 
-
         // parse options
         if (argc == 1 || cmdParser.cmdOptionGiven("-l", "--list")) {
 
