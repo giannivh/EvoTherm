@@ -191,7 +191,7 @@ void EvohomeClient::cancelOverride(const Zone &zone) {
               << std::endl;
 }
 
-void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string data) {
+void EvohomeClient::setZoneTargetTemp(const Zone &zone, const std::string &data) {
 
     // url
     std::string url = "https://tccna.honeywell.com/WebAPI/emea/api/v1/temperatureZone/" + zone.zoneId + "/heatSetpoint";

@@ -105,7 +105,7 @@ private:
     void fetchInstallationInfo();
     void fetchTemperatures();
 
-    void setZoneTargetTemp(const Zone &zone, const std::string data);
+    void setZoneTargetTemp(const Zone &zone, const std::string &data);
 };
 
 
