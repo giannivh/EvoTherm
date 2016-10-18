@@ -32,7 +32,6 @@
 #include "model/config.h"
 #include "model/evohome/evohomeclient.h"
 #include "model/io/cmdparser.h"
-#include "model/io/terminal.h"
 #include "model/exitcode.h"
 #include "model/util/dateutil.h"
 
@@ -48,6 +47,13 @@ int main(int argc, char* argv[]) {
     }
 
     try {
+
+        // create?
+        if (cmdParser.cmdOptionGiven("-c", "--config")) {
+
+            Config::create(terminal);
+            terminal.exitClean();
+        }
 
         // assert config validity
         Config config = Config::assertValidity();

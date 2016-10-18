@@ -32,22 +32,24 @@
 #define EVOTHERM_CONFIG_H
 
 #include <string>
+#include "io/terminal.h"
 
 class Config {
 
 public:
 
-    std::string getUsername();
-    std::string getPassword();
+    const std::string username;
+    const std::string password;
 
     static Config assertValidity();
+    static Config create(const Terminal &terminal);
 
 private:
 
-    Config(std::string username, std::string password);
+    static const std::string getConfigDirectory();
+    static const std::string getConfigLocation();
 
-    std::string username;
-    std::string password;
+    Config(std::string username, std::string password);
 };
 
 

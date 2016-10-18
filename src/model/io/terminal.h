@@ -47,12 +47,21 @@ public:
     void printError(const std::string &message) const;
     void printFatalError(const EvoThermException &evoThermException) const;
     void printSuccess(const std::string &message) const;
+    void printMessage(const std::string &message) const;
+
+    const std::string getInput(const std::string &message) const;
+    const std::string getInputMasked(const std::string &message) const;
+    const bool askYesNo(const std::string &message, const bool &defaultOption) const;
+
+    const void exitClean() const;
 
 private:
 
     void printHelpOption(const std::string &shortOption, const std::string &longOption, const std::string &description) const;
     void printHelpMode(const std::string &mode, const std::string &description) const;
     void printHelpExample(const std::string &example) const;
+
+    void setSTDINEcho(const bool &echoEnabled) const;
 
 };
 

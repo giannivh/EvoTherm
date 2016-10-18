@@ -31,6 +31,7 @@
 #include "config.h"
 #include "exitcode.h"
 #include "exception/evothermexception.h"
+#include "app.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h>
@@ -38,15 +39,8 @@
 
 Config Config::assertValidity() {
 
-    // get home dir
-    const char* homedir;
-    if ((homedir = getenv("HOME")) == NULL) {
-
-        homedir = getpwuid(getuid())->pw_dir;
-    }
-
     // config location
-    std::string configLocation = std::string(homedir) + "/.evotherm/config";
+    std::string configLocation = getConfigLocation();
 
     // check if file exists
     struct stat buffer;
@@ -55,14 +49,16 @@ Config Config::assertValidity() {
         std::string message = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
         message += "@     WARNING: SETTINGS FILE NOT FOUND     @\n";
         message += "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
-        message += "Please create one at '" + configLocation + "' with following data:\n";
+        message += "Please create one at \"" + configLocation + "\" with following data:\n";
         message += "ET_USERNAME=your_username_here\n";
-        message += "ET_PASSWORD=your_password_here";
+        message += "ET_PASSWORD=your_password_here\n\n";
+        message += "Alternatively, you can generate one by issuing \"" + std::string(APP_EXEC) +" --config\".";
 
         throw EvoThermException(message, EXIT_NO_CONFIG);
     }
 
     // check file permissions
+#ifndef _WIN32
     int statchmod = buffer.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
     char chmod[4];
     snprintf(chmod, 4, "%o", statchmod);
@@ -71,12 +67,13 @@ Config Config::assertValidity() {
         std::string message = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
         message += "@     WARNING: UNPROTECTED SETTINGS FILE     @\n";
         message += "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
-        message += "Permissions " + std::string(chmod) + " for '" + configLocation + "' are too open.\n";
+        message += "Permissions " + std::string(chmod) + " for \"" + configLocation + "\" are too open.\n";
         message += "The file should not be accessible by other users.\n";
         message += "Please change the file's permissions to 600.";
 
         throw EvoThermException(message, EXIT_INVALID_CONFIG);
     }
+#endif
 
     // parse file
     std::ifstream infile(configLocation.c_str());
@@ -103,17 +100,67 @@ Config Config::assertValidity() {
     return Config(username, password);
 }
 
+Config Config::create(const Terminal &terminal) {
+
+    // config location
+    std::string configDirectory = getConfigDirectory();
+    std::string configLocation = getConfigLocation();
+
+    // check if file exists
+    struct stat buffer;
+    if (stat(configLocation.c_str(), &buffer) == 0 && !terminal.askYesNo("Do you want to overwrite your current config? ", true)) {
+
+        throw EvoThermException("Config creation aborted by user.", EXIT_CONFIG_ABORTED);
+    }
+
+    // ask email address and password
+    terminal.printMessage("Before we get started, we need your Honeywell My Total Connect Comfort credentials.");
+    std::string username = terminal.getInput("What is your email address? ");
+    std::string password = terminal.getInputMasked("What is your password? ");
+
+    // mkdir .evotherm
+#ifdef _WIN32
+    _mkdir(configDirectory.c_str());
+#else
+    mkdir(configDirectory.c_str(), 0755);
+#endif
+
+    // (over)write file
+    std::ofstream outfile(configLocation);
+    outfile << "ET_USERNAME=" << username << std::endl;
+    outfile << "ET_PASSWORD=" << password << std::endl;
+    outfile.close();
+
+    // chmod 600
+#ifndef _WIN32
+    chmod(configLocation.c_str(), (__mode_t) strtol("0600", 0, 8));
+#endif
+
+    terminal.printMessage("\nConfig file created at \"" + configLocation + "\"!");
+
+    return Config(username, password);
+}
+
+const std::string Config::getConfigDirectory() {
+
+    // get home dir
+    const char* homedir;
+    if ((homedir = getenv("HOME")) == NULL) {
+
+        homedir = getpwuid(getuid())->pw_dir;
+    }
+
+    // config directory
+    return std::string(homedir) + "/.evotherm";
+}
+
+const std::string Config::getConfigLocation() {
+
+    // config location
+    return getConfigDirectory() + "/config";
+}
+
 Config::Config(std::string username, std::string password)
         : username(username), password(password) {
 
-}
-
-std::string Config::getUsername() {
-
-    return this->username;
-}
-
-std::string Config::getPassword() {
-
-    return this->password;
 }

@@ -33,6 +33,12 @@
 #include "../app.h"
 #include "../markup.h"
 #include "../util/dateutil.h"
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <termios.h>
+#include <unistd.h>
+#endif
 
 void Terminal::printHelp() const {
 
@@ -45,10 +51,11 @@ void Terminal::printHelp(const int &exitCode) const {
     std::cout << "   by " << APP_AUTHOR << std::endl;
     std::cout << std::endl;
 
-    std::cout << "Usage: " << APP_EXEC << " [[-h] | [-l] | [[-z ZONE] [[[-t TEMP] [-u UNTIL]] | [-c]]] | [[-m MODE] [-u UNTIL]]]" << std::endl;
+    std::cout << "Usage: " << APP_EXEC << " [[-h] | [-c] | [-l] | [[-z ZONE] [[[-t TEMP] [-u UNTIL]] | [-c]]] | [[-m MODE] [-u UNTIL]]]" << std::endl;
     std::cout << std::endl;
 
     printHelpOption("-h", "--help", "Print this help.");
+    printHelpOption("-c", "--config", "Generate config file with your credentials.");
     printHelpOption("-l", "--list", "Optional. Print current status of all zones.");
     printHelpOption("-z", "--zone", "Select zone ZONE.");
     printHelpOption("-t", "--temp", "Use temperature setpoint TEMP.");
@@ -67,6 +74,7 @@ void Terminal::printHelp(const int &exitCode) const {
     std::cout << std::endl;
 
     std::cout << "Example: " << std::endl;
+    printHelpExample("--config");
     printHelpExample("--list");
     printHelpExample("--zone \"Bathroom\" --temp \"24\" --until \"2016-10-14 20:00:00\"");
     printHelpExample("--zone \"Bathroom\" --cancel");
@@ -195,4 +203,95 @@ void Terminal::printError(const std::string &message) const {
 void Terminal::printSuccess(const std::string &message) const {
 
     std::cout << GREEN_LIGHT << message << RESET << std::endl << std::endl;
+}
+
+void Terminal::printMessage(const std::string &message) const {
+
+    std::cout << message << std::endl;
+}
+
+const std::string Terminal::getInput(const std::string &message) const {
+
+    std::cout << message; // no new line
+
+    std::string input = "";
+
+    getline(std::cin, input);
+
+    return input;
+}
+
+const std::string Terminal::getInputMasked(const std::string &message) const {
+
+    this->setSTDINEcho(false);
+    std::string input = this->getInput(message);
+    this->setSTDINEcho(true);
+
+    return input;
+}
+
+const bool Terminal::askYesNo(const std::string &message, const bool &defaultOption) const {
+
+    std::string input = "";
+    std::string append = std::string("[") + (defaultOption? "Yn": "yN") + "] ";
+
+    while (true) {
+
+        input = getInput(message + append);
+
+        if (input == "y" || input == "yes" || (defaultOption && input == "")) {
+
+            return true;
+        }
+        else if (input == "n" || input == "no" || (!defaultOption && input == "")) {
+
+            return false;
+        }
+        else {
+
+            this->printError("Please write y or n.");
+        }
+    }
+}
+
+
+void Terminal::setSTDINEcho(const bool &echoEnabled) const {
+
+#ifdef _WIN32
+
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+    GetConsoleMode(hStdin, &mode);
+
+    if (echoEnabled) {
+
+        mode |= ENABLE_ECHO_INPUT;
+    } else {
+
+        mode &= ~ENABLE_ECHO_INPUT;
+    }
+
+    SetConsoleMode(hStdin, mode);
+
+#else
+
+    struct termios tty;
+    tcgetattr(STDIN_FILENO, &tty);
+
+    if (echoEnabled) {
+
+        tty.c_lflag |= ECHO;
+    } else {
+
+        tty.c_lflag &= ~ECHO;
+    }
+
+    (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+
+#endif
+}
+
+const void Terminal::exitClean() const {
+
+    exit(0);
 }

@@ -61,8 +61,8 @@ void EvohomeClient::login() {
     dataMap.insert(std::make_pair("Pragma", "no-cache"));
     dataMap.insert(std::make_pair("grant_type", "password"));
     dataMap.insert(std::make_pair("scope", "EMEA-V1-Basic EMEA-V1-Anonymous EMEA-V1-Get-Current-User-Account"));
-    dataMap.insert(std::make_pair("Username", this->config.getUsername()));
-    dataMap.insert(std::make_pair("Password", this->config.getPassword()));
+    dataMap.insert(std::make_pair("Username", this->config.username));
+    dataMap.insert(std::make_pair("Password", this->config.password));
     dataMap.insert(std::make_pair("Connection", "Keep-Alive"));
 
     std::string content = HttpClient::post(url, headerList, dataMap);
