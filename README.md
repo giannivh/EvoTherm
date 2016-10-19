@@ -35,6 +35,12 @@ $ make install
 
 If you get an error on `make install`, issue `sudo make install`.
 
+Or, if you're on a mac:
+    
+```
+$ brew install giannivh/tap/evotherm
+```
+
 ## Usage
 
 Use `evotherm --help` to get all options.
