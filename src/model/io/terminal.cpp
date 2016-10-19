@@ -57,7 +57,7 @@ void Terminal::printHelp(const int &exitCode) const {
     printHelpOption("-h", "--help", "Print this help.");
     printHelpOption("-c", "--config", "Generate config file with your credentials.");
     printHelpOption("-l", "--list", "Optional. Print current status of all zones.");
-    printHelpOption("-z", "--zone", "Select zone ZONE.");
+    printHelpOption("-z", "--zone", "Select zone ZONE. Use comma separated list for multiple zones.");
     printHelpOption("-t", "--temp", "Use temperature setpoint TEMP.");
     printHelpOption("-u", "--until", "Optional. Set setpoint/mode until UNTIL, leave out to make permanent. (Format \"yyyy-MM-dd HH:mm:ss\")");
     printHelpOption("-c", "--cancel", "Cancel temperature setpoint override for the selected zone.");
@@ -105,7 +105,7 @@ void Terminal::printHelpExample(const std::string &example) const {
 void Terminal::printZones(const InstallationInfo &installationInfo) const {
 
     // print mode
-    std::cout << "Your " << installationInfo.modelType << " is in " <<
+    std::cout << std::endl << "Your " << installationInfo.modelType << " is in " <<
               BOLD << installationInfo.currentMode << RESET << " mode";
     if (installationInfo.currentModeUntil != "") {
 
@@ -202,7 +202,7 @@ void Terminal::printError(const std::string &message) const {
 
 void Terminal::printSuccess(const std::string &message) const {
 
-    std::cout << GREEN_LIGHT << message << RESET << std::endl << std::endl;
+    std::cout << GREEN_LIGHT << message << RESET << std::endl;
 }
 
 void Terminal::printMessage(const std::string &message) const {

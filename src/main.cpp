@@ -34,6 +34,8 @@
 #include "model/io/cmdparser.h"
 #include "model/exitcode.h"
 #include "model/util/dateutil.h"
+#include "model/util/zoneutil.h"
+#include "model/util/temperatureutil.h"
 
 int main(int argc, char* argv[]) {
 
@@ -85,47 +87,53 @@ int main(int argc, char* argv[]) {
             terminal.printSuccess("Mode successfully set to " + mode + ".");
         } else if (cmdParser.cmdOptionGiven("-z", "--zone")) {
 
-            // get zone
-            const std::string &zone = cmdParser.getCMDOptionValue("-z", "--zone");
+            // get parameters
+            const std::vector<std::string> zones = ZoneUtil::parseZones(cmdParser.getCMDOptionValue("-z", "--zone"));
+            const std::string &temp = cmdParser.getCMDOptionValue("-t", "--temp");
+            const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
 
-            // check zone
-            if (zone == CMDParser::NO_VALUE || !evohomeClient.hasZone(zone)) {
+            // can't be empty
+            if (zones.empty()) {
 
                 throw EvoThermException("Invalid zone.", EXIT_INVALID_ZONE);
             }
 
-            // operation on zone
-            if (cmdParser.cmdOptionGiven("-c", "--cancel")) {
+            // check each zone
+            for (int i = 0; i < zones.size(); i++) {
 
-                // cancel override
-                evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
-                terminal.printSuccess("Target temperature override for " + zone + " cancelled.");
-            } else {
+                if (!evohomeClient.hasZone(zones[i])) {
 
-                // set setpoint temperature
-                const std::string &temp = cmdParser.getCMDOptionValue("-t", "--temp");
-                const std::string &until = cmdParser.getCMDOptionValue("-u", "--until");
-
-                if (temp == CMDParser::NO_VALUE) {
-
-                    throw EvoThermException("Invalid zone parameters. --temp TEMP is required.", EXIT_INVALID_ZONE_PARAM);
+                    throw EvoThermException("Invalid zone " + zones[i] + ".", EXIT_INVALID_ZONE);
                 }
+            }
 
-                // validate temperature
-                char *endptr = 0;
-                strtod(temp.c_str(), &endptr);
-                if (*endptr != '\0' || endptr == temp) {
+            // check parameter validity
+            if (!cmdParser.cmdOptionGiven("-c", "--cancel")) {
 
-                    throw EvoThermException("Invalid temperature " + temp + ".", EXIT_INVALID_TEMP);
+                TemperatureUtil::assertValidTemperature(temp);
+            }
+
+            // process each zone
+            for (int i = 0; i < zones.size(); i++) {
+
+                const std::string &zone = zones[i];
+
+                // operation on zone
+                if (cmdParser.cmdOptionGiven("-c", "--cancel")) {
+
+                    // cancel override
+                    evohomeClient.cancelOverride(evohomeClient.getZoneByName(zone));
+                    terminal.printSuccess("Target temperature override for " + zone + " cancelled.");
+                } else {
+
+                    // parse until
+                    std::string untilParsed = DateUtil::toUTC(until);
+
+                    // set setpoint temperature
+                    evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
+                    terminal.printSuccess("Target temperature for " + zone + " set to " + temp + " °C" +
+                                                  ((until == "")? "": " until ") + until + ".");
                 }
-
-                // parse until
-                std::string untilParsed = DateUtil::toUTC(until);
-
-                // set setpoint temperature
-                evohomeClient.setTargetTemperature(evohomeClient.getZoneByName(zone), temp, untilParsed);
-                terminal.printSuccess("Target temperature for " + zone + " set to " + temp + " °C" +
-                                              ((until == "")? "": " until ") + DateUtil::toLocal(until) + ".");
             }
         } else {
 
