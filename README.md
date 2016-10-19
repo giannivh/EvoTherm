@@ -1,6 +1,6 @@
 # EvoTherm
 
-Command-line utility to control your Evohome thermostat. EvoTherm is still work in progress.
+Command-line utility to control your Evohome thermostat.
 
 With EvoTherm you can:
 
