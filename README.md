@@ -6,7 +6,7 @@ With EvoTherm you can:
 
 * list your zones and current operating mode
 * set the target temperature of any zone, permanently or temporarily
-* set the operating mode
+* set the operating mode, permanently or temporarily
 
 <img src="https://raw.githubusercontent.com/giannivh/EvoTherm/master/doc/evotherm_01.png" width="600">
 <img src="https://raw.githubusercontent.com/giannivh/EvoTherm/master/doc/evotherm_02.png" width="600">
@@ -78,6 +78,12 @@ To cancel a target temperature override, and to return to the normal schedule, i
 
 ```
 $ evotherm --zone "My Zone" --cancel
+```
+
+You can also set multiple zones at once. Use a comma separated list for this. Example:
+
+```
+$ evotherm --zone "Zone1,Zone2,Zone3" --temp 16 --until "2016-10-19 23:00:00"
 ```
 
 ### Set mode
